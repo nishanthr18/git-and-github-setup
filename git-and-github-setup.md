@@ -1,65 +1,91 @@
-# Git & GitHub Setup for Beginners (Windows)
+# Git & GitHub Setup Guide (Windows & macOS)
 
-A simple step-by-step guide to connect Git with GitHub using **SSH** (Recommended).
-
----
-
-# Prerequisites
-
-- Install Git: https://git-scm.com/downloads
-- Create a GitHub account: https://github.com
+A beginner-friendly guide to install Git, configure it, connect it to GitHub using SSH, and push your first repository.
 
 ---
 
-# Step 1: Verify Git Installation
+# Table of Contents
 
-Open **PowerShell** or **Git Bash**.
+1. Install Git
+2. Configure Git
+3. Generate SSH Key
+4. Start SSH Agent
+5. Add SSH Key
+6. Add SSH Key to GitHub
+7. Test SSH Connection
+8. Create Your First Repository
+9. Push Your First Project
+10. Daily Git Workflow
+11. Common Commands
+12. Troubleshooting
+
+---
+
+# 1. Install Git
+
+## Windows
+
+Download Git:
+
+https://git-scm.com/download/win
+
+Install using the default settings.
+
+Verify installation:
 
 ```bash
 git --version
 ```
 
-Example:
+---
 
-```text
-git version 2.50.1.windows.1
+## macOS
+
+### Option 1 (Recommended)
+
+Install using Homebrew.
+
+```bash
+brew install git
+```
+
+### Option 2
+
+Install Xcode Command Line Tools.
+
+```bash
+xcode-select --install
+```
+
+Verify installation.
+
+```bash
+git --version
 ```
 
 ---
 
-# Step 2: Configure Git
+# 2. Configure Git
 
-Tell Git who you are.
+Configure your name.
 
 ```bash
 git config --global user.name "Your Name"
 ```
 
-Example:
-
-```bash
-git config --global user.name "Nishanth Gowda"
-```
-
-Now set your email.
+Configure your email.
 
 ```bash
 git config --global user.email "your_email@example.com"
 ```
 
-Example:
-
-```bash
-git config --global user.email "nishanth@example.com"
-```
-
-Verify:
+Verify.
 
 ```bash
 git config --global --list
 ```
 
-Output:
+Example:
 
 ```text
 user.name=Nishanth Gowda
@@ -68,7 +94,9 @@ user.email=nishanth@example.com
 
 ---
 
-# Step 3: Check if an SSH Key Already Exists
+# 3. Check for an Existing SSH Key
+
+Both Windows and macOS:
 
 ```bash
 ls ~/.ssh
@@ -81,13 +109,13 @@ id_ed25519
 id_ed25519.pub
 ```
 
-Skip to **Step 5**.
+You already have an SSH key.
 
 Otherwise continue.
 
 ---
 
-# Step 4: Generate a New SSH Key
+# 4. Generate a New SSH Key
 
 ```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
@@ -99,38 +127,29 @@ Example:
 ssh-keygen -t ed25519 -C "nishanth@example.com"
 ```
 
-You'll see:
+Press **Enter** to accept the default location.
 
-```text
-Enter file in which to save the key
-```
-
-Press **Enter**.
-
-You'll then be asked for a passphrase.
-
-You can:
-
-- Press **Enter** for no passphrase.
-- Or create one for extra security.
+Optionally enter a passphrase.
 
 ---
 
-# Step 5: Start the SSH Agent
+# 5. Start the SSH Agent
 
-Check its status.
+## Windows (PowerShell)
+
+Check the service.
 
 ```powershell
 Get-Service ssh-agent
 ```
 
-If it is stopped:
+If stopped:
 
 ```powershell
 Start-Service ssh-agent
 ```
 
-(Optional) Start it automatically whenever Windows starts.
+(Optional) Start automatically.
 
 ```powershell
 Set-Service -Name ssh-agent -StartupType Automatic
@@ -138,63 +157,89 @@ Set-Service -Name ssh-agent -StartupType Automatic
 
 ---
 
-# Step 6: Add the SSH Key
+## macOS
+
+Start the agent.
+
+```bash
+eval "$(ssh-agent -s)"
+```
+
+---
+
+# 6. Add the SSH Key
+
+Windows:
 
 ```bash
 ssh-add ~/.ssh/id_ed25519
 ```
 
-You should see:
+macOS:
 
-```text
-Identity added
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+Older macOS versions:
+
+```bash
+ssh-add -K ~/.ssh/id_ed25519
 ```
 
 ---
 
-# Step 7: Copy the Public Key
+# 7. Copy the Public Key
 
-Display your public key.
+Windows (PowerShell)
+
+```powershell
+Get-Content ~/.ssh/id_ed25519.pub
+```
+
+OR
 
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Copy the **entire output**.
+---
 
-It starts with:
+macOS
 
-```text
-ssh-ed25519 AAAA...
+```bash
+cat ~/.ssh/id_ed25519.pub
 ```
+
+Copy the entire key.
 
 ---
 
-# Step 8: Add the SSH Key to GitHub
+# 8. Add the SSH Key to GitHub
 
 1. Open GitHub.
-2. Click your profile picture.
-3. Click **Settings**.
-4. Click **SSH and GPG Keys**.
-5. Click **New SSH Key**.
+2. Click your profile.
+3. Settings.
+4. SSH and GPG Keys.
+5. New SSH Key.
 6. Title:
 
 ```
 My Laptop
 ```
 
-7. Paste your copied key.
+7. Paste the key.
 8. Click **Add SSH Key**.
 
 ---
 
-# Step 9: Test the Connection
+# 9. Test the SSH Connection
 
 ```bash
 ssh -T git@github.com
 ```
 
-The first time you'll see:
+First time:
 
 ```text
 Are you sure you want to continue connecting (yes/no)?
@@ -206,19 +251,17 @@ Type:
 yes
 ```
 
-Success:
+Expected output:
 
 ```text
 Hi your_username! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-Congratulations! Git is now connected to GitHub using SSH.
-
 ---
 
-# Step 10: Create a New Repository on GitHub
+# 10. Create a GitHub Repository
 
-Create a repository from GitHub.
+Create a repository on GitHub.
 
 Example:
 
@@ -226,17 +269,15 @@ Example:
 learn-git
 ```
 
-Do **NOT** initialize it with:
+Do **not** initialize it with:
 
 - README
-- .gitignore
 - License
-
-Create an empty repository.
+- .gitignore
 
 ---
 
-# Step 11: Create a Local Project
+# 11. Create a Local Project
 
 ```bash
 mkdir learn-git
@@ -246,15 +287,11 @@ mkdir learn-git
 cd learn-git
 ```
 
-Initialize Git.
-
 ```bash
 git init
 ```
 
----
-
-# Step 12: Create Your First File
+Create a README.
 
 ```bash
 echo "# Learn Git" > README.md
@@ -262,7 +299,7 @@ echo "# Learn Git" > README.md
 
 ---
 
-# Step 13: Stage the File
+# 12. Stage Files
 
 ```bash
 git add .
@@ -270,7 +307,7 @@ git add .
 
 ---
 
-# Step 14: Commit
+# 13. Commit
 
 ```bash
 git commit -m "Initial commit"
@@ -278,9 +315,9 @@ git commit -m "Initial commit"
 
 ---
 
-# Step 15: Connect Local Repository to GitHub
+# 14. Connect to GitHub
 
-Copy the SSH URL from GitHub.
+Copy the SSH URL.
 
 Example:
 
@@ -288,28 +325,21 @@ Example:
 git@github.com:your_username/learn-git.git
 ```
 
-Add it as the remote.
+Add the remote.
 
 ```bash
 git remote add origin git@github.com:your_username/learn-git.git
 ```
 
-Verify:
+Verify.
 
 ```bash
 git remote -v
 ```
 
-Output:
-
-```text
-origin  git@github.com:your_username/learn-git.git (fetch)
-origin  git@github.com:your_username/learn-git.git (push)
-```
-
 ---
 
-# Step 16: Push to GitHub
+# 15. Push
 
 Rename the default branch.
 
@@ -325,19 +355,17 @@ git push -u origin main
 
 Done!
 
-Your code is now on GitHub.
-
 ---
 
-# Everyday Workflow
+# Daily Workflow
 
-Check changed files.
+Check status.
 
 ```bash
 git status
 ```
 
-Stage changes.
+Stage.
 
 ```bash
 git add .
@@ -355,7 +383,7 @@ Push.
 git push
 ```
 
-Pull the latest changes.
+Pull latest changes.
 
 ```bash
 git pull
@@ -365,55 +393,49 @@ git pull
 
 # Useful Commands
 
-Current branch
+Current branch.
 
 ```bash
 git branch
 ```
 
-All branches
-
-```bash
-git branch -a
-```
-
-Create a branch
+Create a branch.
 
 ```bash
 git checkout -b feature/login
 ```
 
-Switch branch
+Switch branches.
 
 ```bash
 git checkout main
 ```
 
-Merge branch
+Merge.
 
 ```bash
 git merge feature/login
 ```
 
-View commit history
+History.
 
 ```bash
 git log --oneline
 ```
 
-View remotes
+View remote.
 
 ```bash
 git remote -v
 ```
 
-Remove remote
+Remove remote.
 
 ```bash
 git remote remove origin
 ```
 
-Change remote URL
+Change remote URL.
 
 ```bash
 git remote set-url origin git@github.com:username/repository.git
@@ -421,11 +443,11 @@ git remote set-url origin git@github.com:username/repository.git
 
 ---
 
-# Common Problems
+# Troubleshooting
 
-### Permission denied (publickey)
+## Permission denied (publickey)
 
-Check:
+Run:
 
 ```bash
 ssh -T git@github.com
@@ -433,21 +455,21 @@ ssh -T git@github.com
 
 If it fails:
 
-- Ensure your SSH key is added to GitHub.
+- Ensure the SSH key is added to GitHub.
 - Ensure the SSH agent is running.
-- Ensure your repository uses the SSH URL.
+- Ensure the repository uses an SSH remote.
 
 ---
 
-### Repository not found
+## Repository not found
 
-Verify your remote.
+Check:
 
 ```bash
 git remote -v
 ```
 
-If it shows HTTPS, switch to SSH.
+If it shows HTTPS:
 
 ```bash
 git remote set-url origin git@github.com:username/repository.git
@@ -455,23 +477,10 @@ git remote set-url origin git@github.com:username/repository.git
 
 ---
 
-### Check Git Configuration
+## Check Git Configuration
 
 ```bash
 git config --global --list
-```
-
----
-
-# Recommended Folder Structure
-
-```
-Projects/
-│
-├── project-one/
-├── project-two/
-├── learn-git/
-└── portfolio/
 ```
 
 ---
@@ -486,7 +495,9 @@ git push
 git pull
 git branch
 git checkout branch-name
+git merge branch-name
 git log --oneline
+git remote -v
 ```
 
 ---
@@ -495,12 +506,11 @@ git log --oneline
 
 You now know how to:
 
-- Install Git
-- Configure Git
-- Generate an SSH key
-- Connect GitHub with SSH
-- Create repositories
-- Push code to GitHub
-- Pull changes
-- Work with branches
-- Use the most common Git commands
+- ✅ Install Git
+- ✅ Configure Git
+- ✅ Generate an SSH key
+- ✅ Connect GitHub using SSH
+- ✅ Create repositories
+- ✅ Push and pull code
+- ✅ Work with branches
+- ✅ Troubleshoot common Git issues
